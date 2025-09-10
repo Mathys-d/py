@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from collections import namedtuple
 
-# ---- Structures ----
 Position = namedtuple('Position', ['symbol', 'quantity', 'purchase_price', 'purchase_date'])
 Transaction = namedtuple('Transaction', ['date', 'symbol', 'quantity', 'price', 'type'])
 
@@ -13,14 +12,12 @@ class Portfolio:
     positions: list[Position]
     transactions: list[Transaction]
 
-# ---- Lambdas ----
 valeur_position = lambda pos: pos.quantity * pos.purchase_price
 gain_absolu = lambda pos, prix_actuel: (prix_actuel - pos.purchase_price) * pos.quantity if pos.purchase_price > 0 else 0
 rendement_pourcent = lambda pos, prix_actuel: ((prix_actuel - pos.purchase_price) / pos.purchase_price) * 100 if pos.purchase_price > 0 else 0
 valeur_actuelle = lambda pos, prix_actuel: pos.quantity * prix_actuel
 poids_portfolio = lambda pos, prix_actuel, total: (valeur_actuelle(pos, prix_actuel) / total) * 100 if total > 0 else 0
 
-# ---- Conversion JSON → Position ----
 def convertir_vers_positions(portfolio_dict):
     return Position(
         portfolio_dict['symbol'],
@@ -47,7 +44,7 @@ def lire_portfolio_json(nom_fichier: str):
         parcourir(reader, positions)
     return positions
 
-# ---- Lecture des prix actuels depuis CSV ----
+
 def lire_prix_actuels(fichier_csv):
     prix_actuels = {}
     with open(fichier_csv, newline='', encoding='utf-8') as f:
@@ -58,7 +55,7 @@ def lire_prix_actuels(fichier_csv):
             prix_actuels[symbole] = prix
     return prix_actuels
 
-# ---- Fonctions globales avec map() ----
+
 def calculer_valeurs_positions(positions):
     return list(map(valeur_position, positions))
 
@@ -74,7 +71,7 @@ def generer_rapport_complet(positions, prix_actuels_dict):
     rendements = calculer_rendements_portfolio(positions, prix_actuels_dict)
     return {"valeurs": valeurs, "gains": gains, "rendements": rendements}
 
-# ---- Affichage ----
+
 def afficher_positions(positions, prix_actuels_csv="portfolio_actual_prices_sample.csv"):
     prix_actuels = lire_prix_actuels(prix_actuels_csv)
     total_valeur_actuelle = sum(valeur_actuelle(p, prix_actuels.get(p.symbol, p.purchase_price)) for p in positions)
@@ -96,7 +93,7 @@ def afficher_portfolio():
     portfolio = Portfolio(positions=positions, transactions=[])
     afficher_positions(portfolio.positions)
 
-# ---- Rapport global avec map() ----
+
 def afficher_rapport_global():
     positions = lire_portfolio_json("portfolio_sample.json")
     prix_actuels = lire_prix_actuels("portfolio_actual_prices_sample.csv")
@@ -105,9 +102,7 @@ def afficher_rapport_global():
     print("Gains actuels :", rapport["gains"])
     print("Rendements :", [round(r, 2) for r in rapport["rendements"]])
 
-# ---- Exécution ----
+
 if __name__ == "__main__":
-    print("=== Affichage détaillé du portfolio ===\n")
     afficher_portfolio()
-    print("=== Rapport global avec map() ===\n")
     afficher_rapport_global()
