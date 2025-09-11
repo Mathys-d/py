@@ -78,7 +78,7 @@ def afficher_positions(positions, prix_actuels_csv="portfolio_actual_prices_samp
 
     for p in positions:
         prix_actuel = prix_actuels.get(p.symbol, p.purchase_price)
-        print(f"--- {p.symbol} ---")
+        print(f"{p.symbol}")
         print(f"Quantité : {p.quantity}")
         print(f"Prix d'achat : {p.purchase_price}")
         print(f"Valeur d'achat : {valeur_position(p)}")
